@@ -1,0 +1,70 @@
+import pyxel
+class App:
+    def __init__(self):
+        
+        # Initialize the Pyxel window (width, height)
+        pyxel.init(160, 120)
+        # Set the initial position of the square
+        self.x = 75
+        self.y = 55
+        self.score = 0
+        # Set the initial position and velocity of the sprite
+        self.sprite_x = 80
+        self.sprite_y = 60
+        self.sprite_dx = 2
+        self.sprite_dy = 2
+        # Set the initial position and velocity of the peach circle
+        self.peach_x = 10
+        self.peach_y = 10
+        self.peach_dx = 1
+        self.peach_dy = 1
+        # Start the game loop
+        pyxel.run(self.update, self.draw)
+    def update(self):
+        # Update the square's position based on arrow keys
+        if pyxel.btn(pyxel.KEY_UP):
+            self.y -= 2
+        if pyxel.btn(pyxel.KEY_DOWN):
+            self.y += 2
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.x -= 2
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.x += 2
+        # Check for sprite collection
+        if (self.x <= 10 and self.y <= 10):
+            self.score += 1
+            self.sprite_x = pyxel.rndi(10, 150)
+            self.sprite_y = pyxel.rndi(10, 110)
+        # Update the sprite's position
+        self.sprite_x += self.sprite_dx
+        self.sprite_y += self.sprite_dy
+        # Bounce the sprite off the edges of the screen
+        if self.sprite_x <= 0 or self.sprite_x >= 160:
+            self.sprite_dx *= -1
+        if self.sprite_y <= 0 or self.sprite_y >= 120:
+            self.sprite_dy *= -1
+        # Update the peach circle's position
+        self.peach_x += self.peach_dx
+        self.peach_y += self.peach_dy
+        # Bounce the peach circle off the edges of the screen
+        if self.peach_x <= 0 or self.peach_x >= 160:
+            self.peach_dx *= -1
+        if self.peach_y <= 0 or self.peach_y >= 120:
+            self.peach_dy *= -1
+        # Check for game over (collision with peach circle)
+        if (abs(self.x - self.peach_x) < 10 and abs(self.y - self.peach_y) < 10):
+            pyxel.text(50, 50, "Game Over!", 8)
+            pyxel.stop()
+    def draw(self):
+        # Clear the screen with black (color 0)
+        pyxel.cls(0)
+        # Draw the green square
+        pyxel.rect(self.x, self.y, 10, 10, 11)
+        # Draw the moving sprite (color 11)
+        pyxel.circ(self.sprite_x, self.sprite_y, 5, 11)
+        # Draw the peach circle chasing the green square
+        pyxel.circ(self.peach_x, self.peach_y, 5, 15)
+        # Display the score
+        pyxel.text(140, 5, f"Score: {self.score}", 7)
+# Run the game
+App()
